@@ -15,7 +15,7 @@ import (
 	"github.com/VidarSolutions/avalanchego/utils/constants"
 	"github.com/VidarSolutions/avalanchego/utils/crypto/secp256k1"
 	"github.com/VidarSolutions/avalanchego/utils/units"
-	"github.com/VidarSolutions/avalanchego/vms/components/avax"
+	"github.com/VidarSolutions/avalanchego/vms/components/Vidar"
 	"github.com/VidarSolutions/avalanchego/vms/secp256k1fx"
 	"github.com/VidarSolutions/coreth/params"
 	"github.com/ethereum/go-ethereum/common"

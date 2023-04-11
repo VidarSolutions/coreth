@@ -20,7 +20,7 @@ import (
 	"github.com/VidarSolutions/avalanchego/utils/math"
 	"github.com/VidarSolutions/avalanchego/utils/set"
 	"github.com/VidarSolutions/avalanchego/utils/wrappers"
-	"github.com/VidarSolutions/avalanchego/vms/components/avax"
+	"github.com/VidarSolutions/avalanchego/vms/components/Vidar"
 	"github.com/VidarSolutions/avalanchego/vms/components/verify"
 	"github.com/VidarSolutions/avalanchego/vms/secp256k1fx"
 	"github.com/ethereum/go-ethereum/common"

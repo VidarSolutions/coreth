@@ -48,7 +48,7 @@ import (
 	"github.com/VidarSolutions/avalanchego/utils/set"
 	"github.com/VidarSolutions/avalanchego/utils/units"
 	"github.com/VidarSolutions/avalanchego/version"
-	"github.com/VidarSolutions/avalanchego/vms/components/avax"
+	"github.com/VidarSolutions/avalanchego/vms/components/Vidar"
 	"github.com/VidarSolutions/avalanchego/vms/components/chain"
 	"github.com/VidarSolutions/avalanchego/vms/secp256k1fx"
 
