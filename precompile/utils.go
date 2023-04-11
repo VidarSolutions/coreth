@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/ava-labs/coreth/vmerrs"
+	"github.com/VidarSolutions/coreth/vmerrs"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 

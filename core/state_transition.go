@@ -33,10 +33,10 @@ import (
 
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/core/vm"
-	"github.com/ava-labs/coreth/params"
-	"github.com/ava-labs/coreth/vmerrs"
+	"github.com/VidarSolutions/coreth/core/types"
+	"github.com/VidarSolutions/coreth/core/vm"
+	"github.com/VidarSolutions/coreth/params"
+	"github.com/VidarSolutions/coreth/vmerrs"
 	"github.com/ethereum/go-ethereum/common"
 )
 

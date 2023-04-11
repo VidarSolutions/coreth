@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/set"
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/ethdb"
-	"github.com/ava-labs/coreth/params"
-	statesyncclient "github.com/ava-labs/coreth/sync/client"
+	"github.com/VidarSolutions/avalanchego/ids"
+	"github.com/VidarSolutions/avalanchego/utils/set"
+	"github.com/VidarSolutions/coreth/core/rawdb"
+	"github.com/VidarSolutions/coreth/ethdb"
+	"github.com/VidarSolutions/coreth/params"
+	statesyncclient "github.com/VidarSolutions/coreth/sync/client"
 	"github.com/ethereum/go-ethereum/common"
 )
 

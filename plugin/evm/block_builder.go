@@ -7,12 +7,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ava-labs/avalanchego/utils/timer"
-	"github.com/ava-labs/coreth/params"
+	"github.com/VidarSolutions/avalanchego/utils/timer"
+	"github.com/VidarSolutions/coreth/params"
 
-	"github.com/ava-labs/avalanchego/snow"
-	commonEng "github.com/ava-labs/avalanchego/snow/engine/common"
-	"github.com/ava-labs/coreth/core"
+	"github.com/VidarSolutions/avalanchego/snow"
+	commonEng "github.com/VidarSolutions/avalanchego/snow/engine/common"
+	"github.com/VidarSolutions/coreth/core"
 	"github.com/ethereum/go-ethereum/log"
 )
 

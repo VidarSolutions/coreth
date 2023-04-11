@@ -6,10 +6,10 @@ package statesyncclient
 import (
 	"errors"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/coreth/peer"
+	"github.com/VidarSolutions/avalanchego/ids"
+	"github.com/VidarSolutions/coreth/peer"
 
-	"github.com/ava-labs/avalanchego/version"
+	"github.com/VidarSolutions/avalanchego/version"
 )
 
 var _ peer.NetworkClient = &mockNetwork{}

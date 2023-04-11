@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ava-labs/coreth/params"
+	"github.com/VidarSolutions/coreth/params"
 
-	"github.com/ava-labs/avalanchego/snow"
+	"github.com/VidarSolutions/avalanchego/snow"
 )
 
 func TestBlockBuilderShutsDown(t *testing.T) {
