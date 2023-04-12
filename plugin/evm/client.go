@@ -31,7 +31,7 @@ type Client interface {
 	ExportKey(ctx context.Context, userPass api.UserPass, addr string) (*secp256k1.PrivateKey, string, error)
 	ImportKey(ctx context.Context, userPass api.UserPass, privateKey *secp256k1.PrivateKey) (string, error)
 	Import(ctx context.Context, userPass api.UserPass, to string, sourceChain string) (ids.ID, error)
-	ExportAVAX(ctx context.Context, userPass api.UserPass, amount uint64, to string) (ids.ID, error)
+	Exportvidar(ctx context.Context, userPass api.UserPass, amount uint64, to string) (ids.ID, error)
 	Export(ctx context.Context, userPass api.UserPass, amount uint64, to string, assetID string) (ids.ID, error)
 	StartCPUProfiler(ctx context.Context) error
 	StopCPUProfiler(ctx context.Context) error
@@ -50,7 +50,7 @@ type client struct {
 // NewClient returns a Client for interacting with EVM [chain]
 func NewClient(uri, chain string) Client {
 	return &client{
-		requester:      rpc.NewEndpointRequester(fmt.Sprintf("%s/ext/bc/%s/avax", uri, chain)),
+		requester:      rpc.NewEndpointRequester(fmt.Sprintf("%s/ext/bc/%s/vidar", uri, chain)),
 		adminRequester: rpc.NewEndpointRequester(fmt.Sprintf("%s/ext/bc/%s/admin", uri, chain)),
 	}
 }
@@ -67,7 +67,7 @@ func (c *client) IssueTx(ctx context.Context, txBytes []byte) (ids.ID, error) {
 	if err != nil {
 		return res.TxID, fmt.Errorf("problem hex encoding bytes: %w", err)
 	}
-	err = c.requester.SendRequest(ctx, "avax.issueTx", &api.FormattedTx{
+	err = c.requester.SendRequest(ctx, "vidar.issueTx", &api.FormattedTx{
 		Tx:       txStr,
 		Encoding: formatting.Hex,
 	}, res)
@@ -77,7 +77,7 @@ func (c *client) IssueTx(ctx context.Context, txBytes []byte) (ids.ID, error) {
 // GetAtomicTxStatus returns the status of [txID]
 func (c *client) GetAtomicTxStatus(ctx context.Context, txID ids.ID) (Status, error) {
 	res := &GetAtomicTxStatusReply{}
-	err := c.requester.SendRequest(ctx, "avax.getAtomicTxStatus", &api.JSONTxID{
+	err := c.requester.SendRequest(ctx, "vidar.getAtomicTxStatus", &api.JSONTxID{
 		TxID: txID,
 	}, res)
 	return res.Status, err
@@ -86,7 +86,7 @@ func (c *client) GetAtomicTxStatus(ctx context.Context, txID ids.ID) (Status, er
 // GetAtomicTx returns the byte representation of [txID]
 func (c *client) GetAtomicTx(ctx context.Context, txID ids.ID) ([]byte, error) {
 	res := &api.FormattedTx{}
-	err := c.requester.SendRequest(ctx, "avax.getAtomicTx", &api.GetTxArgs{
+	err := c.requester.SendRequest(ctx, "vidar.getAtomicTx", &api.GetTxArgs{
 		TxID:     txID,
 		Encoding: formatting.Hex,
 	}, res)
@@ -101,7 +101,7 @@ func (c *client) GetAtomicTx(ctx context.Context, txID ids.ID) ([]byte, error) {
 // from [sourceChain]
 func (c *client) GetAtomicUTXOs(ctx context.Context, addrs []string, sourceChain string, limit uint32, startAddress, startUTXOID string) ([][]byte, api.Index, error) {
 	res := &api.GetUTXOsReply{}
-	err := c.requester.SendRequest(ctx, "avax.getUTXOs", &api.GetUTXOsArgs{
+	err := c.requester.SendRequest(ctx, "vidar.getUTXOs", &api.GetUTXOsArgs{
 		Addresses:   addrs,
 		SourceChain: sourceChain,
 		Limit:       cjson.Uint32(limit),
@@ -129,7 +129,7 @@ func (c *client) GetAtomicUTXOs(ctx context.Context, addrs []string, sourceChain
 // ListAddresses returns all addresses on this chain controlled by [user]
 func (c *client) ListAddresses(ctx context.Context, user api.UserPass) ([]string, error) {
 	res := &api.JSONAddresses{}
-	err := c.requester.SendRequest(ctx, "avax.listAddresses", &user, res)
+	err := c.requester.SendRequest(ctx, "vidar.listAddresses", &user, res)
 	return res.Addresses, err
 }
 
@@ -137,7 +137,7 @@ func (c *client) ListAddresses(ctx context.Context, user api.UserPass) ([]string
 // in both Avalanche standard format and hex format
 func (c *client) ExportKey(ctx context.Context, user api.UserPass, addr string) (*secp256k1.PrivateKey, string, error) {
 	res := &ExportKeyReply{}
-	err := c.requester.SendRequest(ctx, "avax.exportKey", &ExportKeyArgs{
+	err := c.requester.SendRequest(ctx, "vidar.exportKey", &ExportKeyArgs{
 		UserPass: user,
 		Address:  addr,
 	}, res)
@@ -147,7 +147,7 @@ func (c *client) ExportKey(ctx context.Context, user api.UserPass, addr string) 
 // ImportKey imports [privateKey] to [user]
 func (c *client) ImportKey(ctx context.Context, user api.UserPass, privateKey *secp256k1.PrivateKey) (string, error) {
 	res := &api.JSONAddress{}
-	err := c.requester.SendRequest(ctx, "avax.importKey", &ImportKeyArgs{
+	err := c.requester.SendRequest(ctx, "vidar.importKey", &ImportKeyArgs{
 		UserPass:   user,
 		PrivateKey: privateKey,
 	}, res)
@@ -158,7 +158,7 @@ func (c *client) ImportKey(ctx context.Context, user api.UserPass, privateKey *s
 // returns the ID of the newly created transaction
 func (c *client) Import(ctx context.Context, user api.UserPass, to, sourceChain string) (ids.ID, error) {
 	res := &api.JSONTxID{}
-	err := c.requester.SendRequest(ctx, "avax.import", &ImportArgs{
+	err := c.requester.SendRequest(ctx, "vidar.import", &ImportArgs{
 		UserPass:    user,
 		To:          to,
 		SourceChain: sourceChain,
@@ -166,19 +166,19 @@ func (c *client) Import(ctx context.Context, user api.UserPass, to, sourceChain 
 	return res.TxID, err
 }
 
-// ExportAVAX sends AVAX from this chain to the address specified by [to].
+// Exportvidar sends vidar from this chain to the address specified by [to].
 // Returns the ID of the newly created atomic transaction
-func (c *client) ExportAVAX(
+func (c *client) Exportvidar(
 	ctx context.Context,
 	user api.UserPass,
 	amount uint64,
 	to string,
 ) (ids.ID, error) {
-	return c.Export(ctx, user, amount, to, "AVAX")
+	return c.Export(ctx, user, amount, to, "vidar")
 }
 
 // Export sends an asset from this chain to the P/C-Chain.
-// After this tx is accepted, the AVAX must be imported to the P/C-chain with an importTx.
+// After this tx is accepted, the vidar must be imported to the P/C-chain with an importTx.
 // Returns the ID of the newly created atomic transaction
 func (c *client) Export(
 	ctx context.Context,
@@ -188,8 +188,8 @@ func (c *client) Export(
 	assetID string,
 ) (ids.ID, error) {
 	res := &api.JSONTxID{}
-	err := c.requester.SendRequest(ctx, "avax.export", &ExportArgs{
-		ExportAVAXArgs: ExportAVAXArgs{
+	err := c.requester.SendRequest(ctx, "vidar.export", &ExportArgs{
+		ExportvidarArgs: ExportvidarArgs{
 			UserPass: user,
 			Amount:   cjson.Uint64(amount),
 			To:       to,

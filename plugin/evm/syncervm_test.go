@@ -260,7 +260,7 @@ func createSyncServerAndClientVMs(t *testing.T, test syncTest) *syncVMSetup {
 	}()
 
 	// configure [serverVM]
-	importAmount := 2000000 * units.Avax // 2M avax
+	importAmount := 2000000 * units.vidar // 2M vidar
 	_, serverVM, _, serverAtomicMemory, serverAppSender := GenesisVMWithUTXOs(
 		t,
 		true,
@@ -290,7 +290,7 @@ func createSyncServerAndClientVMs(t *testing.T, test syncTest) *syncVMSetup {
 		case 1:
 			// export some of the imported UTXOs to test exportTx is properly synced
 			exportTx, err = serverVM.newExportTx(
-				serverVM.ctx.AVAXAssetID,
+				serverVM.ctx.vidarAssetID,
 				importAmount/2,
 				serverVM.ctx.XChainID,
 				testShortIDAddrs[0],

@@ -99,8 +99,8 @@ const (
 
 var (
 	// x2cRate is the conversion rate between the smallest denomination on the X-Chain
-	// 1 nAVAX and the smallest denomination on the C-Chain 1 wei. Where 1 nAVAX = 1 gWei.
-	// This is only required for AVAX because the denomination of 1 AVAX is 9 decimal
+	// 1 nvidar and the smallest denomination on the C-Chain 1 wei. Where 1 nvidar = 1 gWei.
+	// This is only required for vidar because the denomination of 1 vidar is 9 decimal
 	// places on the X and P chains, but is 18 decimal places within the EVM.
 	x2cRate       = big.NewInt(x2cRateInt64)
 	x2cRateMinus1 = big.NewInt(x2cRateMinus1Int64)
@@ -129,7 +129,7 @@ const (
 
 // Define the API endpoints for the VM
 const (
-	avaxEndpoint   = "/avax"
+	vidarEndpoint   = "/vidar"
 	adminEndpoint  = "/admin"
 	ethRPCEndpoint = "/rpc"
 	ethWSEndpoint  = "/ws"
@@ -167,7 +167,7 @@ var (
 	errConflictingAtomicInputs        = errors.New("invalid block due to conflicting atomic inputs")
 	errUnclesUnsupported              = errors.New("uncles unsupported")
 	errRejectedParent                 = errors.New("rejected parent")
-	errInsufficientFundsForFee        = errors.New("insufficient AVAX funds to pay transaction fee")
+	errInsufficientFundsForFee        = errors.New("insufficient vidar funds to pay transaction fee")
 	errNoEVMOutputs                   = errors.New("tx has no EVM outputs")
 	errNilBaseFeeApricotPhase3        = errors.New("nil base fee is invalid after apricotPhase3")
 	errNilExtDataGasUsedApricotPhase4 = errors.New("nil extDataGasUsed is invalid after apricotPhase4")
@@ -489,7 +489,7 @@ func (vm *VM) Initialize(
 	vm.codec = Codec
 
 	// TODO: read size from settings
-	vm.mempool = NewMempool(chainCtx.AVAXAssetID, defaultMempoolSize)
+	vm.mempool = NewMempool(chainCtx.vidarAssetID, defaultMempoolSize)
 
 	if err := vm.initializeMetrics(); err != nil {
 		return err
@@ -725,7 +725,7 @@ func (vm *VM) preBatchOnFinalizeAndAssemble(header *types.Header, state *state.S
 		}
 		var contribution, gasUsed *big.Int
 		if rules.IsApricotPhase4 {
-			contribution, gasUsed, err = tx.BlockFeeContribution(rules.IsApricotPhase5, vm.ctx.AVAXAssetID, header.BaseFee)
+			contribution, gasUsed, err = tx.BlockFeeContribution(rules.IsApricotPhase5, vm.ctx.vidarAssetID, header.BaseFee)
 			if err != nil {
 				return nil, nil, nil, err
 			}
@@ -773,7 +773,7 @@ func (vm *VM) postBatchOnFinalizeAndAssemble(header *types.Header, state *state.
 		// Note: we do not need to check if we are in at least ApricotPhase4 here because
 		// we assume that this function will only be called when the block is in at least
 		// ApricotPhase5.
-		txContribution, txGasUsed, err = tx.BlockFeeContribution(true, vm.ctx.AVAXAssetID, header.BaseFee)
+		txContribution, txGasUsed, err = tx.BlockFeeContribution(true, vm.ctx.vidarAssetID, header.BaseFee)
 		if err != nil {
 			return nil, nil, nil, err
 		}
@@ -887,7 +887,7 @@ func (vm *VM) onExtraStateChange(block *types.Block, state *state.StateDB) (*big
 		}
 		// If ApricotPhase4 is enabled, calculate the block fee contribution
 		if rules.IsApricotPhase4 {
-			contribution, gasUsed, err := tx.BlockFeeContribution(rules.IsApricotPhase5, vm.ctx.AVAXAssetID, block.BaseFee())
+			contribution, gasUsed, err := tx.BlockFeeContribution(rules.IsApricotPhase5, vm.ctx.vidarAssetID, block.BaseFee())
 			if err != nil {
 				return nil, nil, err
 			}
@@ -1144,12 +1144,12 @@ func (vm *VM) CreateHandlers(context.Context) (map[string]*commonEng.HTTPHandler
 		return nil, fmt.Errorf("failed to get primary alias for chain due to %w", err)
 	}
 	apis := make(map[string]*commonEng.HTTPHandler)
-	avaxAPI, err := newHandler("avax", &AvaxAPI{vm})
+	vidarAPI, err := newHandler("vidar", &vidarAPI{vm})
 	if err != nil {
-		return nil, fmt.Errorf("failed to register service for AVAX API due to %w", err)
+		return nil, fmt.Errorf("failed to register service for vidar API due to %w", err)
 	}
-	enabledAPIs = append(enabledAPIs, "avax")
-	apis[avaxEndpoint] = avaxAPI
+	enabledAPIs = append(enabledAPIs, "vidar")
+	apis[vidarEndpoint] = vidarAPI
 
 	if vm.config.CorethAdminAPIEnabled {
 		adminAPI, err := newHandler("admin", NewAdminService(vm, os.ExpandEnv(fmt.Sprintf("%s_coreth_performance_%s", vm.config.CorethAdminAPIDir, primaryAlias))))
@@ -1420,7 +1420,7 @@ func (vm *VM) GetAtomicUTXOs(
 	startAddr ids.ShortID,
 	startUTXOID ids.ID,
 	limit int,
-) ([]*avax.UTXO, ids.ShortID, ids.ID, error) {
+) ([]*vidar.UTXO, ids.ShortID, ids.ID, error) {
 	if limit <= 0 || limit > maxUTXOsToFetch {
 		limit = maxUTXOsToFetch
 	}
@@ -1450,9 +1450,9 @@ func (vm *VM) GetAtomicUTXOs(
 		lastUTXOID = ids.Empty
 	}
 
-	utxos := make([]*avax.UTXO, len(allUTXOBytes))
+	utxos := make([]*vidar.UTXO, len(allUTXOBytes))
 	for i, utxoBytes := range allUTXOBytes {
-		utxo := &avax.UTXO{}
+		utxo := &vidar.UTXO{}
 		if _, err := vm.codec.Unmarshal(utxoBytes, utxo); err != nil {
 			return nil, ids.ShortID{}, ids.ID{}, fmt.Errorf("error parsing UTXO: %w", err)
 		}
@@ -1486,9 +1486,9 @@ func (vm *VM) GetSpendableFunds(
 		}
 		addr := GetEthAddress(key)
 		var balance uint64
-		if assetID == vm.ctx.AVAXAssetID {
-			// If the asset is AVAX, we divide by the x2cRate to convert back to the correct
-			// denomination of AVAX that can be exported.
+		if assetID == vm.ctx.vidarAssetID {
+			// If the asset is vidar, we divide by the x2cRate to convert back to the correct
+			// denomination of vidar that can be exported.
 			balance = new(big.Int).Div(state.GetBalance(addr), x2cRate).Uint64()
 		} else {
 			balance = state.GetBalanceMultiCoin(addr, common.Hash(assetID)).Uint64()
@@ -1520,15 +1520,15 @@ func (vm *VM) GetSpendableFunds(
 	return inputs, signers, nil
 }
 
-// GetSpendableAVAXWithFee returns a list of EVMInputs and keys (in corresponding
-// order) to total [amount] + [fee] of [AVAX] owned by [keys].
+// GetSpendablevidarWithFee returns a list of EVMInputs and keys (in corresponding
+// order) to total [amount] + [fee] of [vidar] owned by [keys].
 // This function accounts for the added cost of the additional inputs needed to
 // create the transaction and makes sure to skip any keys with a balance that is
 // insufficient to cover the additional fee.
 // Note: we return [][]*secp256k1.PrivateKey even though each input
 // corresponds to a single key, so that the signers can be passed in to
 // [tx.Sign] which supports multiple keys on a single input.
-func (vm *VM) GetSpendableAVAXWithFee(
+func (vm *VM) GetSpendablevidarWithFee(
 	keys []*secp256k1.PrivateKey,
 	amount uint64,
 	cost uint64,
@@ -1574,8 +1574,8 @@ func (vm *VM) GetSpendableAVAXWithFee(
 		additionalFee := newFee - prevFee
 
 		addr := GetEthAddress(key)
-		// Since the asset is AVAX, we divide by the x2cRate to convert back to
-		// the correct denomination of AVAX that can be exported.
+		// Since the asset is vidar, we divide by the x2cRate to convert back to
+		// the correct denomination of vidar that can be exported.
 		balance := new(big.Int).Div(state.GetBalance(addr), x2cRate).Uint64()
 		// If the balance for [addr] is insufficient to cover the additional cost
 		// of adding an input to the transaction, skip adding the input altogether
@@ -1606,7 +1606,7 @@ func (vm *VM) GetSpendableAVAXWithFee(
 		inputs = append(inputs, EVMInput{
 			Address: addr,
 			Amount:  inputAmount,
-			AssetID: vm.ctx.AVAXAssetID,
+			AssetID: vm.ctx.vidarAssetID,
 			Nonce:   nonce,
 		})
 		signers = append(signers, []*secp256k1.PrivateKey{key})

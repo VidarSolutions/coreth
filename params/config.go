@@ -194,7 +194,7 @@ type ChainConfig struct {
 	ApricotPhase6BlockTimestamp *big.Int `json:"apricotPhase6BlockTimestamp,omitempty"`
 	// Apricot Phase Post-6 deprecates the NativeAssetCall precompile (soft). (nil = no fork, 0 = already activated)
 	ApricotPhasePost6BlockTimestamp *big.Int `json:"apricotPhasePost6BlockTimestamp,omitempty"`
-	// Banff restricts import/export transactions to AVAX. (nil = no fork, 0 = already activated)
+	// Banff restricts import/export transactions to vidar. (nil = no fork, 0 = already activated)
 	BanffBlockTimestamp *big.Int `json:"banffBlockTimestamp,omitempty"`
 	// Cortina increases the block gas limit to 15M. (nil = no fork, 0 = already activated)
 	CortinaBlockTimestamp *big.Int `json:"cortinaBlockTimestamp,omitempty"`

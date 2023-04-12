@@ -124,13 +124,13 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 		NetworkID:    testNetworkID,
 		BlockchainID: testCChainID,
 		SourceChain:  testXChainID,
-		ImportedInputs: []*avax.TransferableInput{
+		ImportedInputs: []*vidar.TransferableInput{
 			{
-				UTXOID: avax.UTXOID{
+				UTXOID: vidar.UTXOID{
 					TxID:        txID,
 					OutputIndex: uint32(0),
 				},
-				Asset: avax.Asset{ID: testAvaxAssetID},
+				Asset: vidar.Asset{ID: testvidarAssetID},
 				In: &secp256k1fx.TransferInput{
 					Amt: importAmount,
 					Input: secp256k1fx.Input{
@@ -139,11 +139,11 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 				},
 			},
 			{
-				UTXOID: avax.UTXOID{
+				UTXOID: vidar.UTXOID{
 					TxID:        txID,
 					OutputIndex: uint32(1),
 				},
-				Asset: avax.Asset{ID: testAvaxAssetID},
+				Asset: vidar.Asset{ID: testvidarAssetID},
 				In: &secp256k1fx.TransferInput{
 					Amt: importAmount,
 					Input: secp256k1fx.Input{
@@ -156,12 +156,12 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 			{
 				Address: testEthAddrs[0],
 				Amount:  importAmount - feeAmount,
-				AssetID: testAvaxAssetID,
+				AssetID: testvidarAssetID,
 			},
 			{
 				Address: testEthAddrs[1],
 				Amount:  importAmount,
-				AssetID: testAvaxAssetID,
+				AssetID: testvidarAssetID,
 			},
 		},
 	}
