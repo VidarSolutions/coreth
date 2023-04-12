@@ -100,7 +100,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 	addr := key.PublicKey().Address()
 	ethAddr := GetEthAddress(key)
 
-	vidarAmount := 50 * units.Millividar
+	vidarAmount := 50 * units.MilliVidar
 	vidarUTXOID := vidar.UTXOID{
 		OutputIndex: 0,
 	}
